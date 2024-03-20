@@ -15,6 +15,7 @@ use winit::{
 };
 
 use winit::platform::pump_events::EventLoopExtPumpEvents;
+use crate::framework::framework::Application;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]

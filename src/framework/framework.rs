@@ -1,18 +1,34 @@
-use crate::framework::main_loop::run;
+use crate::framework::main_loop;
 
-pub struct App {
+pub struct Application {}
 
-}
-
-impl App {
+impl Application {
     pub fn new() -> Self {
-        App {
-
-        }
+        Application {}
     }
 
-    pub async fn run(&mut self) {
-        run().await
+    pub fn configure<T>(&mut self, model_builder: ModelFn<T>) -> Runtime<T> {
+        Runtime {
+            model: model_builder(self)
+        }
+    }
+}
+
+pub struct Runtime<Model> {
+    model: Model,
+}
+
+impl<Model> Runtime<Model> {
+    pub fn run(&mut self) {
+        let rt = Self::build_runtime();
+        rt.block_on(main_loop::run())
+    }
+
+    fn build_runtime() -> tokio::runtime::Runtime {
+        tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .build()
+            .expect("failed to create tokio runtime")
     }
 }
 
@@ -21,12 +37,10 @@ pub struct Update {
     pub delta: std::time::Duration,
 }
 
-pub type ModelFn<Model> = fn(&App) -> Model;
+pub type ModelFn<Model> = fn(&Application) -> Model;
 
-pub type UpdateFn<Model> = fn(&App, &mut Model, Update);
+pub type UpdateFn<Model> = fn(&Application, &mut Model, Update);
 
-pub type RenderFn<Model> = fn(&App, &mut Model);
+pub type RenderFn<Model> = fn(&Application, &mut Model);
 
-pub type EventFn<Model, Event> = fn(&App, &mut Model, Event);
-
-
+pub type EventFn<Model, Event> = fn(&Application, &mut Model, Event);
