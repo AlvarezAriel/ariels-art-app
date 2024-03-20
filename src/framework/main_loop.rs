@@ -15,7 +15,7 @@ use winit::{
 };
 
 use winit::platform::pump_events::EventLoopExtPumpEvents;
-use crate::framework::framework::Application;
+use crate::framework::framework::{Application, Runtime};
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
@@ -324,7 +324,7 @@ impl State {
     }
 }
 
-pub async fn run() {
+pub async fn run<Model>(runtime: &mut Runtime<'_, Model>) {
     env_logger::init();
     let mut event_loop = EventLoop::new().unwrap();
     let mut builder = winit::window::WindowBuilder::new();
@@ -393,6 +393,7 @@ pub async fn run() {
 
         let events = manager.pump().unwrap();
         for event in events {
+            runtime.publish_tablet_event(event);
             println!("{:?}", event);
         }
     }
