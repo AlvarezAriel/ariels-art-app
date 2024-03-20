@@ -1,2 +1,2 @@
 pub mod framework;
-mod main_loop;
+pub mod main_loop;

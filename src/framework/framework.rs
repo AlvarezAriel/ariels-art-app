@@ -1,16 +1,18 @@
+use crate::framework::main_loop::run;
+
 pub struct App {
 
 }
 
-impl<Model, Event> App {
+impl App {
     pub fn new() -> Self {
         App {
 
         }
     }
 
-    pub fn run() {
-
+    pub async fn run(&mut self) {
+        run().await
     }
 }
 
